@@ -1,19 +1,27 @@
+import exception.ExecptionValidacao;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Conta implements IConta{
 
-    private static final int AGENCIA_PADRAO = 1;
-    private static int SEQUENCIAL = 1;
+    protected static final int AGENCIA_PADRAO = 1;
+    protected static int SEQUENCIAL = 1;
 
     protected int agencia;
     protected int numero;
     protected double saldo;
 
     public Conta() {
-        this.agencia = Conta.AGENCIA_PADRAO;
+        this.agencia = AGENCIA_PADRAO;
         this.numero = SEQUENCIAL++;
     }
 
     @Override
     public void sacar(double valor) {
+        if(valor > saldo) {
+            throw new ExecptionValidacao("Não é possível efetuar sacque superior ao saldo: " + saldo);
+        }
         saldo -= valor;
     }
 
@@ -22,13 +30,12 @@ public abstract class Conta implements IConta{
         saldo += valor;
 
     }
-
     @Override
     public void transferir(double valor, Conta contaDestino) {
         sacar(valor);
         contaDestino.depositar(valor);
     }
-    protected void imprimirDadosComuns() {
+    public void imprimirExtrato() {
         System.out.println(String.format("Agência: %d", agencia));
         System.out.println(String.format("Número: %d", numero));
         System.out.println(String.format("Saldo: %2f", saldo));
@@ -44,5 +51,14 @@ public abstract class Conta implements IConta{
 
     public double getSaldo() {
         return saldo;
+    }
+
+    @Override
+    public String toString() {
+        return "Conta{" +
+                "agencia=" + agencia +
+                ", numero=" + numero +
+                ", saldo=" + saldo +
+                '}';
     }
 }
